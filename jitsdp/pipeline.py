@@ -369,7 +369,8 @@ class PyTorch(Model):
 
                     outputs = self.classifier.forward_proba(inputs.float())
                     probabilities.append(outputs.detach().cpu().numpy())
-            probabilities = np.concatenate(probabilities)
+            if probabilities:
+                probabilities = np.concatenate(probabilities)
         else:
             probabilities = np.zeros(len(df_features))
 
@@ -455,6 +456,8 @@ def _steps_transform(steps, X):
             X = step.transform(X)
         except NotFittedError:
             logger.warning('Step {} not fitted.'.format(step))
+        except ValueError:
+            logger.warning('Step {} not fitted.'.format(step))
     return X
 
 
@@ -498,7 +501,8 @@ class Scikit(Model):
         pass
 
     def predict_proba(self, df_features, **kwargs):
-        if self.trained:
+        #if self.trained:
+        if self.trained and len(df_features) > 0:
             X = df_features[self.features].values
             X = _steps_transform(self.steps, X)
 

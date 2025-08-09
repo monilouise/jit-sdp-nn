@@ -24,6 +24,11 @@ def generate(config):
 
     for key_experiment_name in ['tuning_experiment_name', 'testing_experiment_name']:
         experiment_name = config[key_experiment_name]
+        if mlflow.get_experiment_by_name(
+            experiment_name) is None:
+            print('Experiment {} not found'.format(experiment_name))
+            continue
+            
         experiment_id = mlflow.get_experiment_by_name(
             experiment_name).experiment_id
         df_experiment = load_runs(experiment_id)

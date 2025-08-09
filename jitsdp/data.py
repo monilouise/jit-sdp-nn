@@ -13,8 +13,9 @@ FEATURES = ['fix', 'ns', 'nd', 'nf', 'entrophy', 'la',
             'ld', 'lt', 'ndev', 'age', 'nuc', 'exp', 'rexp', 'sexp']
 LABEL = 'contains_bug'
 
-RAW_DATASETS = ['brackets', 'camel', 'fabric8', 'jgroups', 'neutron', 'tomcat']
-PREPROCESSED_DATASETS = ['broadleaf', 'nova', 'npm', 'spring-integration']
+RAW_DATASETS = ['ant-ivy', 'commons-bcel', 'commons-beanutils', 'commons-codec', 'commons-collections', 'commons-compress', 'commons-configuration', 'commons-digester', 'commons-jcs', 'commons-lang', 'commons-math', 'commons-net', 'commons-scxml', 'commons-validator', 'commons-vfs', 'gora', 'opennlp', 'parquet-mr', 'giraph']
+
+PREPROCESSED_DATASETS = []
 DATASETS = RAW_DATASETS + PREPROCESSED_DATASETS
 
 memory = Memory(location='data', verbose=0)
@@ -33,7 +34,8 @@ def make_stream(dataset):
 
 
 def format_url(dataset):
-    return 'https://raw.githubusercontent.com/dinaldoap/jit-sdp-data/master/{}.csv'.format(dataset)
+    print('https://raw.githubusercontent.com/monilouise/jit-defect4j-data/master/{}.csv'.format(dataset))
+    return 'https://raw.githubusercontent.com/monilouise/jit-defect4j-data/master/{}.csv'.format(dataset)
 
 
 def download(url):

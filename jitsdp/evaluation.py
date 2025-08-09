@@ -41,6 +41,7 @@ def run(config):
         pipeline.save()
     target_prediction = None
     update_step = 0
+    print('Start training')
     for current in range(start, end, step):
         df_train = df_prequential[:current].copy()
         df_test = df_prequential[current:min(current + step, end)].copy()
@@ -54,6 +55,7 @@ def run(config):
         pipeline = create_pipeline(config)
         if config['incremental']:
             pipeline.load()
+        print('Training pipeline')
         for metrics in pipeline.train(df_train, df_ma=df_tail, df_val=df_val):
             if __has_metrics(metrics):
                 mlflow.log_metrics(metrics=metrics, step=update_step)
@@ -65,10 +67,24 @@ def run(config):
         target_prediction = pd.concat(
             [target_prediction, target_prediction_test])
 
+        print('Saving data files')
+        df_train.to_csv(
+            'df_train_{}.csv'.format(current), index=False)
+        df_tail.to_csv(
+            'df_tail_{}.csv'.format(current), index=False)
+        df_test.to_csv(
+            'df_test_{}.csv'.format(current), index=False)
+        if df_val is not None:
+            df_val.to_csv(
+                'df_val_{}.csv'.format(current), index=False)
+
+    print('End training')
     target_prediction = target_prediction.reset_index(drop=True)
     results = met.prequential_metrics(
         target_prediction, .99, config['borb_th'])
+    print('Reporting results')
     report(config, results)
+    print('Saved results')
 
 
 def __verification_latency_label(train_timestamp, commit_timestamp, verification_latency):

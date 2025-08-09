@@ -40,6 +40,11 @@ def generate(config):
     verification_latency(config)
     tuning_convergence(config)
     df_testing = best_configs_testing(config)
+
+    if df_testing is None:
+        print('No testing experiment found.')
+        return
+        
     # plotting
     recalls = [
         Metric('r0', '$r_0$', False, True),
@@ -99,6 +104,11 @@ def best_configs_testing(config):
     df_best_configs = df_best_configs.fillna(-1)
     df_best_configs = df_best_configs[config_cols].set_index(config_cols)
     testing_experiment_name = config['testing_experiment_name']
+
+    if mlflow.get_experiment_by_name(
+        testing_experiment_name) is None:
+        return None
+
     testing_experiment_id = mlflow.get_experiment_by_name(
         testing_experiment_name).experiment_id
     df_testing = load_runs(testing_experiment_id)
@@ -350,7 +360,6 @@ def format_metric(metrics, row):
         index.append('{} (std)'.format(metric.name))
     return pd.Series(data, index=index)
 
-
 def datasets_statistics(config):
     language = {
         'fabric8': 'Java',
@@ -363,6 +372,25 @@ def datasets_statistics(config):
         'broadleaf': 'Java',
         'nova': 'Python',
         'npm': 'JavaScript',
+        'ant-ivy': 'Java',
+        'commons-bcel': 'Java',
+        'commons-beanutils': 'Java',
+        'commons-codec': 'Java',
+        'commons-collections': 'Java',
+        'commons-compress': 'Java',
+        'commons-configuration': 'Java',
+        'commons-digester': 'Java',
+        'commons-jcs': 'Java',
+        'commons-lang': 'Java',
+        'commons-math': 'Java',
+        'commons-net': 'Java',
+        'commons-scxml': 'Java',
+        'commons-validator': 'Java',
+        'commons-vfs': 'Java',
+        'gora': 'Java',
+        'opennlp': 'Java',
+        'giraph': 'Java',
+        'parquet-mr': 'Java',
     }
     rows = []
     columns = pd.MultiIndex.from_tuples([('dataset', ''), ('code changes', ''), ('defect-inducing proportions', 'entire dataset'),
